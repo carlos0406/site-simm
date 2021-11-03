@@ -16,6 +16,9 @@ export function HeaderComponent() {
     <Link href="/equipes">
       <a>Equipes</a>
     </Link>
+    <Link href="/atividades">
+      <a>Atividades</a>
+    </Link>
     <Link href="/bases">
       <a>Bases</a>
     </Link>
