@@ -7,6 +7,8 @@ import {FiX} from 'react-icons/fi'
 import {BsFillPersonFill} from 'react-icons/bs'
 import { NewModalAtividade } from '../components/ModalCadastroAtividade'
 import equipes from './equipes'
+import { toast } from 'react-toastify'
+import { useRouter } from 'next/dist/client/router'
 type Equipe = {
   id: number,	
   nome: string,
@@ -21,7 +23,7 @@ interface PaginaPessoaProps{
     atividades:Atividade[]
 }
 export default function Home({atividades,equipes}:PaginaPessoaProps)  {
-
+  const router = useRouter();
   const [pessoasFiltradas,setPessoasFiltradas] = useState(equipes)
   const [filtro,setFiltro]=useState('')
   const [isNewTransactionModalOpen,setIsNewTransactionModalOpen]=useState(false)
@@ -40,6 +42,18 @@ export default function Home({atividades,equipes}:PaginaPessoaProps)  {
     }
     setPessoasFiltradas(newPessoas)
   },[filtro,codigoObra])
+
+  async function remover(id:number) {
+    if(window.confirm('Deseja realmente remover esta atividade?')){
+      const {status}=await api.delete(`/atividade/${id}`)
+      if(status===204){
+        toast.success('atividade removida com sucesso!')
+        router.reload();
+      }else{
+        toast.error('Erro ao tentar deletar, a atividade está sendo usada em alguma registro')
+      }
+    }
+  }
   return (
   
     <Container>
@@ -76,7 +90,7 @@ export default function Home({atividades,equipes}:PaginaPessoaProps)  {
                 <BsFillPersonFill size={30}/> {pessoa.nome}
                 </span>
 
-                <button>
+                <button onClick={() => remover(pessoa.id)}>
                   <FiX size={30}/>
                 </button>
                   

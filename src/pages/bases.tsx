@@ -5,6 +5,8 @@ import { api } from '../services/api'
 import { Container, Listagem, PessoaLista } from '../styles/styles'
 import {FiX} from 'react-icons/fi'
 import {BsFillPersonFill} from 'react-icons/bs'
+import { toast } from 'react-toastify'
+import { useRouter } from 'next/dist/client/router'
 type Base = {
   id: number,	
   nome: string,
@@ -19,7 +21,7 @@ interface PaginaPessoaProps{
     obras:Obra[]
 }
 export default function Bases({bases,obras}:PaginaPessoaProps)  {
-
+  const router = useRouter();
   const [basesFiltradas,setBasesFiltradas] = useState(bases)
   const [filtro,setFiltro]=useState('')
   const [isNewTransactionModalOpen,setIsNewTransactionModalOpen]=useState(false)
@@ -29,6 +31,17 @@ export default function Bases({bases,obras}:PaginaPessoaProps)  {
   }
   function handleCloseTransactionModal(){
     setIsNewTransactionModalOpen(false)
+  }
+  async function remover(id:number) {
+    if(window.confirm('Deseja realmente remover esta equipe?')){
+      const {status}=await api.delete(`/base/${id}`)
+      if(status===204){
+        toast.success('equipe removida com sucesso!')
+        router.reload();
+      }else{
+        toast.error('Erro ao tentar deletar, a equipe está sendo usada em alguma atividade')
+      }
+    }
   }
   useEffect(()=>{   
     let newBases=[...bases]
@@ -73,7 +86,7 @@ export default function Bases({bases,obras}:PaginaPessoaProps)  {
                 <BsFillPersonFill size={30}/> {pessoa.nome}
                 </span>
 
-                <button>
+                <button onClick={() => remover(pessoa.id)}>
                   <FiX size={30}/>
                 </button>
                   

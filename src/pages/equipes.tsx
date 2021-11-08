@@ -6,6 +6,8 @@ import {FiX} from 'react-icons/fi'
 import {BsFillPersonFill} from 'react-icons/bs'
 import {AiOutlineTeam} from 'react-icons/ai'
 import { NewModal } from '../components/ModalCadastro2'
+import { toast } from 'react-toastify'
+import { useRouter } from 'next/dist/client/router'
 interface Atividade{
   id: number,
   nome: string
@@ -21,7 +23,7 @@ interface PaginaPessoaProps{
    
 }
 export default function Home({equipes}:PaginaPessoaProps)  {
-
+  const router = useRouter();
   const [equipesFiltradas,setEquipesFiltradas] = useState(equipes)
   const [filtro,setFiltro]=useState('')
   const [isNewTransactionModalOpen,setIsNewTransactionModalOpen]=useState(false)
@@ -31,6 +33,17 @@ export default function Home({equipes}:PaginaPessoaProps)  {
   }
   function handleCloseTransactionModal(){
     setIsNewTransactionModalOpen(false)
+  }
+  async function remover(id:number) {
+    if(window.confirm('Deseja realmente remover esta equipe?')){
+      const {status}=await api.delete(`/equipe/${id}`)
+      if(status===204){
+        toast.success('equipe removida com sucesso!')
+        router.reload();
+      }else{
+        toast.error('Erro ao tentar deletar, a equipe está sendo usada em alguma atividade')
+      }
+    }
   }
   useEffect(()=>{   
     let newEquipes=[...equipes]
@@ -66,7 +79,7 @@ export default function Home({equipes}:PaginaPessoaProps)  {
                   <AiOutlineTeam size={30}/> {pessoa.nome}
                   </span>
 
-                  <button>
+                  <button onClick={() => remover(pessoa.id)}>
                     <FiX size={30}/>
                   </button>  
                   </span>

@@ -5,6 +5,8 @@ import { api } from '../services/api'
 import { Container, Listagem, PessoaLista } from '../styles/styles'
 import {FiX} from 'react-icons/fi'
 import {BsFillPersonFill} from 'react-icons/bs'
+import { useRouter } from 'next/dist/client/router'
+import { toast } from 'react-toastify'
 type Pessoa = {
   id: number,	
   nome: string,
@@ -19,7 +21,7 @@ interface PaginaPessoaProps{
     obras:Obra[]
 }
 export default function Home({pessoas,obras}:PaginaPessoaProps)  {
-
+  const router = useRouter();
   const [pessoasFiltradas,setPessoasFiltradas] = useState(pessoas)
   const [filtro,setFiltro]=useState('')
   const [isNewTransactionModalOpen,setIsNewTransactionModalOpen]=useState(false)
@@ -30,6 +32,19 @@ export default function Home({pessoas,obras}:PaginaPessoaProps)  {
   function handleCloseTransactionModal(){
     setIsNewTransactionModalOpen(false)
   }
+
+  async function remover(id:number) {
+    if(window.confirm('Deseja realmente remover esta pessoa?')){
+      const {status}=await api.delete(`/pessoa/${id}`)
+      if(status===204){
+        toast.success('Pessoa removida com sucesso!')
+        router.reload();
+      }else{
+        toast.error('Erro ao tentar deletar, a pessoa está sendo usada em algum registro')
+      }
+    }
+  }
+
   useEffect(()=>{   
     let newPessoas=[...pessoas]
     newPessoas=newPessoas.filter(pessoa => pessoa.nome.toLowerCase().includes(filtro.toLowerCase()))
@@ -74,7 +89,7 @@ export default function Home({pessoas,obras}:PaginaPessoaProps)  {
                 <BsFillPersonFill size={30}/> {pessoa.nome}
                 </span>
 
-                <button>
+                <button onClick={() => remover(pessoa.id)}>
                   <FiX size={30}/>
                 </button>
                   
