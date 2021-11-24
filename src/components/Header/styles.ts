@@ -1,7 +1,13 @@
 import styled from 'styled-components';
 
 export const Header = styled.header`
-button{
+a.baixar{
+  position: relative;
+            top: -1rem;
+            left: -8rem;
+            text-decoration: none;
+}
+button.atualizar{
             background-color:#33CC95;
             color: white;
             border: none;
@@ -17,6 +23,23 @@ button{
               filter: brightness(90%);
             }
         }
+
+        button.excluir{
+            background-color:#cf0e0e;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-weight: bold;
+            font-size: 1.25rem;
+            padding: 1rem;
+            position: relative;
+            left: 1rem;
+            transition: filter 0.2s ;
+            &:hover{
+              filter: brightness(90%);
+            }
+        }
+
   div {
     width: 1180px;
     margin:0 auto;
